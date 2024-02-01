@@ -1,9 +1,11 @@
 import * as convert from "color-convert";
 
+// Importer la librairie Notyf
 import { Notyf } from "notyf";
 import "notyf/notyf.min.css";
 const notyf = new Notyf();
 
+// Fonction de génération de palette de couleurs à partir d’une couleur d’entrée
 export const generatePalette = (hex) => {
   // crée un tableau vide.
   const colors = [];
@@ -24,6 +26,7 @@ export const generatePalette = (hex) => {
   return colors;
 };
 
+// Fonction qui transforme un hex en HSL au format CSS
 export const hexToCSSHSL = (hex) => {
   // tranforme le hex d'entrée en HSL.
   const hsl = convert.hex.hsl(hex);

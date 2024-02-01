@@ -3,6 +3,11 @@ import { Notyf } from "notyf";
 import "notyf/notyf.min.css";
 
 import { Color } from "./modules/Color";
+// Tester la classe
+//const containerElement = document.querySelector("main");
+//const color = new Color([0, 0, 0]);
+//color.display(containerElement);
+
 import {
   displayMessage,
   isHexColor,
@@ -40,6 +45,8 @@ const handleForm = (e) => {
     notyf.error(err.message);
   }
 };
+
+formElement.addEventListener("submit", handleForm);
 
 const handleClick = async (e) => {
   // Cherche l'élément avec la classe "color" le plus proche de la cible du
@@ -93,5 +100,4 @@ const displayColors = (input, palette) => {
   palette.map((c) => new Color(c).display(colorContainer));
 };
 
-formElement.addEventListener("submit", handleForm);
 colorContainer.addEventListener("click", handleClick);

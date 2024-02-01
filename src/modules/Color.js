@@ -1,3 +1,4 @@
+// Importe le module color-convert
 import * as convert from "color-convert";
 
 export class Color {
