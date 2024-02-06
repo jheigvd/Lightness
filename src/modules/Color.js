@@ -20,30 +20,33 @@ export class Color {
   }
 
   #generateElement() {
-    // Crée un élément <div>
-    const colorElement = document.createElement("div");
+    // Crée un élément <div> div
+    const div = document.createElement("div");
     // Lui ajoute une class "color"
-    colorElement.classList.add("color");
+    div.classList.add("color");
     // Ajoute l'attribut de donnée "data-color"
-    colorElement.dataset.color = this.#hex;
+    div.dataset.color = this.#hex;
     // Change la couleur de fond de l'élément
-    colorElement.style.backgroundColor = this.#hex;
+    div.style.backgroundColor = this.#hex;
 
-    //Crée un élément <p>
-    const textElement = document.createElement("p");
+    // Crée un élément <p> p
+    const p = document.createElement("p");
     // Lui ajoute comme texte la valeur hexadécimale
-    textElement.textContent = this.#hex;
+    p.textContent = this.#hex;
     // Change la couleur du texte selon la luminosité de la couleur de fond
-    textElement.style.color = this.#hsl[2] < 60 ? "#ffffff" : "#000000";
+    p.style.color = this.#hsl[2] < 60 ? "#ffffff" : "#000000";
+    // this.#hsl[2] fait référence à la troisième valeur (luminosité) du tableau
+    // < 60, inférieure à cela signifie que la couleur est sombre donc mettre le texte en blanc sinon superieur à 60 mettre en noir
+
     // Ajoute l'élément <p> comme enfant du <div>
-    colorElement.appendChild(textElement);
+    div.appendChild(p);
 
     // Retourne le <div>
-    return colorElement;
+    return div;
   }
 
-  display(parentElement) {
+  display(main) {
     // Ajoute this.#element comme enfant d'un élément parent passé en argument.
-    parentElement.appendChild(this.#element);
+    main.appendChild(this.#element);
   }
 }

@@ -8,28 +8,23 @@ import { Color } from "./modules/Color";
 //const color = new Color([0, 0, 0]);
 //color.display(containerElement);
 
-import {
-  displayMessage,
-  isHexColor,
-  hexToCSSHSL,
-  generatePalette,
-} from "./modules/utils";
+import { isHexColor, hexToCSSHSL, generatePalette } from "./modules/utils";
 
 // Instancier Notyf
 const notyf = new Notyf();
 
 // Cherche l'élément <form> dans le DOM
-const formElement = document.querySelector("form");
+const form = document.querySelector("form");
 
 // Cherche l'élément <main> des couleurs dans le DOM
-const colorContainer = document.querySelector("main");
+const main = document.querySelector("main");
 
 const handleForm = (e) => {
   try {
     // Empêche le refresh lors de la soumission du formulaire
     e.preventDefault();
     // Cherche la valeur de l'élément <input>
-    const inputValue = e.target.firstElementChild.value;
+    const inputValue = e.target.firstElementChild.value; // la cible de l'événement déclenché avec la valeur actuelle saisie ou sélectionnée du 1e enfant (important car il y en a plusieurs)
     // Vérifie que la valeur soit bien un code hexadécimal
     if (!isHexColor(inputValue)) {
       // Si ce n'est pas le cas, balancer l'erreur
@@ -46,23 +41,29 @@ const handleForm = (e) => {
   }
 };
 
-formElement.addEventListener("submit", handleForm);
+form.addEventListener("submit", handleForm);
 
 const handleClick = async (e) => {
   // Cherche l'élément avec la classe "color" le plus proche de la cible du
   // click et récupère son data-color.
-  const color = e.target.closest(".color").dataset.color;
+  console.log(e);
+  const color = e.target.closest(".color").dataset.color; // .dataset.color accède à l'attribut data-color de l'élément trouvé.
 
-  // Copie de façon asynchrone la couleur dans le presse-papier
-  await navigator.clipboard.writeText(color);
-
+  try {
+    // Copie de façon asynchrone la couleur dans le presse-papier
+    await navigator.clipboard.writeText(color); // copie le code couleur
+  } catch (error) {
+    console.err(error);
+  }
   // Affiche un message de succès dans une notification
   notyf.success(`copied ${color} to clipboard`);
 };
 
+main.addEventListener("click", handleClick);
+
 const displayColors = (input, palette) => {
   // Efface tout le contenu de l'élément <main>
-  colorContainer.innerHTML = "";
+  main.innerHTML = "";
 
   // Cherche l'élément header dans le DOM
   const header = document.querySelector("header");
@@ -72,8 +73,10 @@ const displayColors = (input, palette) => {
   // Reçoit l'input du formulaire, et modifie la variable css "--shadow-color"
   // avec ce qui sort de la fonction hexToCSSHSL.
   document.documentElement.style.setProperty(
-    "--shadow-color",
-    hexToCSSHSL(input)
+    // document.documentElement = racine html
+    // .style.setProperty définir ou de modifier la valeur d'une propriété
+    "--shadow-color", // nom de la propriété CSS
+    hexToCSSHSL(input) // valeur (fonction qui convertit HEX de couleur en une valeur CSS HSL)
   );
 
   // Crée un tableau avec les index de la palette que nous souhaitons
@@ -82,22 +85,23 @@ const displayColors = (input, palette) => {
   // à l'index du tableau de départ. On ajoute également un "#" au début
   // des chaînes de caractère.
   const gradientColors = [
+    // 3 indices : 0 : Le premier élément de la palette. Math.round(palette.length / 2) : L'indice du milieu arrondi à la valeur entière la plus proche. palette.length - 1 : Le dernier élément de la palette.
     0,
     Math.round(palette.length / 2),
     palette.length - 1,
   ].map((index) => `#${convert.hsl.hex(palette[index])}`);
+  // map itère sur chaque élément du tableau et crée un nouveau tableau avec la couleur convertie #...
 
-  // Utilise les valeurs du tableau gradientColors pour modifier le dégradé.
+  // Utilise les valeurs du tableau gradientColors pour modifier le dégradé, couleur arrière plan style de body
   document.body.style.background = `linear-gradient(-45deg, ${gradientColors.join(
     ","
-  )}`;
+  )}`; // injecte les couleurs du tableau gradientColors, join(",") concatène les éléments du tableau avec une virgule, créant ainsi une liste de couleurs pour le dégradé.
 
-  // Redéfinis background-size.
+  // Redéfinis background-size, la taille de l'image de fond en pourcentage, l'image de fond sera quatre fois plus grande que l'élément body
   document.body.style.backgroundSize = `400% 400%`;
 
   // Prend chaque élément dans le tableau palette, instancie une classe avec
   // ses données et appelle la méthode display() dessus.
-  palette.map((c) => new Color(c).display(colorContainer));
-};
+  palette.map((chaquecouleur) => new Color(chaquecouleur).display(main));
+}; // chaque couleur dans la palette crée une instance Color, appelle display avec main en argument
 
-colorContainer.addEventListener("click", handleClick);
